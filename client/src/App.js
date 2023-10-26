@@ -1,9 +1,10 @@
-import './App.css';
+import LoginSignup from "./components/LoginSignup";
+import './components/Backgroundimage.jpg'
 
 function App() {
   return (
     <div className="App">
-      Video Chat
+      <LoginSignup/>
     </div>
   );
 }
