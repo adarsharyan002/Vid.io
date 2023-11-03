@@ -1,10 +1,11 @@
-import LoginSignup from "./components/LoginSignup";
-import './components/Backgroundimage.jpg'
-
+import { Routes,Route } from 'react-router-dom'
+import LobbyScreen from './screens/LobbyScreen';
 function App() {
   return (
     <div className="App">
-      <LoginSignup/>
+       <Routes>
+        <Route path = '/' element={<LobbyScreen/>}/>
+       </Routes>
     </div>
   );
 }
