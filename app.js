@@ -11,10 +11,9 @@ const io = require("socket.io")(server, {
 	}
 });
 
+
+//middlewares
 app.use(cors());
-
-
-
 app.use(express.json());
 
 const port = process.env.PORT || 4000;
@@ -23,11 +22,22 @@ app.get('/',(req,res)=>{
     res.send('Server is running')
 })
 
+//socket
+
+//mapping
+const mapIdToEmail = new Map();
+const mapEmailToId = new Map();
+
 io.on("connection", (socket) => {
 	socket.emit("me", socket.id);
 
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
+	socket.on("room:join", (data) => {
+	   const {email,room} =data;
+	   mapEmailToId.set(email,socket.id);
+	   mapIdToEmail.set(socket.id,email);
+	   io.to(socket.id).emit("room:join",data);
+	
+
 	});
 
 	socket.on("callUser", ({ userToCall, signalData, from, name }) => {

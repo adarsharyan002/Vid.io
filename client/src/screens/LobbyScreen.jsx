@@ -1,18 +1,35 @@
 import { useEffect,useState,useCallback } from "react";
-
+import { useSocket } from "../context/SocketProvide";
+import { useNavigate } from "react-router-dom";
 const LobbyScreen = () => {
 
     const [email,setEmail] = useState('')
     const [room,setRoom] = useState('')
+    const socket = useSocket();
+    const navigate = useNavigate();
 
     const handleSubmitForm=useCallback((e)=>{
         e.preventDefault();
-        console.log({
-            email,
-            room
-        })
+        socket.emit("room:join",{email,room});
 
-    },[email,room])
+
+    },[email,room,socket])
+
+    const handleJoinRoom = useCallback((data)=>{
+     const {room} = data;
+      navigate(`room/${room}`)
+
+    },[navigate])
+
+    //handling the event
+    useEffect(()=>{
+        socket.on("room:join",handleJoinRoom)
+
+        //deregister a register as we dont want multiple eventlisteners
+        return ()=>{
+            socket.off('room:join,handleJoinRoom')
+        }
+    },[socket,handleJoinRoom])
 
 
     return ( 
