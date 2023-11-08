@@ -38,4 +38,5 @@ class PeerService {
     }
   }
   
-  export default new PeerService();
+  const service = new PeerService();
+  export default service;

@@ -42,12 +42,18 @@ io.on("connection", (socket) => {
 
 	});
 
-	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+	socket.on("user:call", ({ to,offer }) => {
+		io.to(to).emit("incoming:call", { from:socket.id,offer });
 	});
 
-	socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
+	socket.on("call:accepted", ({to,ans}) => {
+		io.to(to).emit("call:accepted", { from:socket.id,ans });
+	});
+	socket.on("peer:nego:needed", ({to,offer}) => {
+		io.to(to).emit("peer:nego:needed", { from:socket.id,offer });
+	});
+	socket.on("peer:nego:done", ({to,ans}) => {
+		io.to(to).emit("peer:nego:final", { from:socket.id,ans });
 	});
 });
 
