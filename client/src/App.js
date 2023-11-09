@@ -1,6 +1,7 @@
 import { Routes,Route } from 'react-router-dom'
 import LobbyScreen from './screens/LobbyScreen';
 import Room from './screens/Room';
+import LoginSignup from './components/LoginSignup';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
        <Routes>
         <Route path = '/' element={<LobbyScreen/>}/>
         <Route path = '/room/:id' element={<Room/>}/>
+        <Route path = '/login' element={<LoginSignup/>}/>
 
        </Routes>
     </div>
