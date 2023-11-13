@@ -3,11 +3,8 @@
     "start": "nodemon app.js"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@reduxjs/toolkit": "^1.9.7",
-=======
     "bcryptjs": "^2.4.3",
->>>>>>> b7bb4a70b56dc482c86a85543b877414788c0f37
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
