@@ -1,7 +1,7 @@
 import {useEffect,useCallback,useState } from 'react';
 import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
-import Peer from '../services/Peer';
+import Peer from '../services/peer';
 
 const Room = () => {
 

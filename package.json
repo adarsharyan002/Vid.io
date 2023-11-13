@@ -1,16 +1,15 @@
-
-
 {
   "scripts": {
     "start": "nodemon app.js"
-    
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.7",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^7.6.3",
     "nodemon": "^3.0.1",
+    "react-redux": "^8.1.3",
     "socket.io": "^4.7.2"
   }
 }

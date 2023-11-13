@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {BrowserRouter} from 'react-router-dom'
 import { SocketProvider } from './context/SocketProvide';
+import configureStore from './redux/configureStore';
+import { Provider } from 'react-redux';
 
 import './index.css';
 import App from './App';
@@ -10,12 +12,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
- <SocketProvider>
-
-    <App />
-    </SocketProvider>
-
- </BrowserRouter>
+      <SocketProvider>
+        <Provider store={configureStore}>
+          <App />
+        </Provider>
+      </SocketProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

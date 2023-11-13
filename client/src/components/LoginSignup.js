@@ -1,6 +1,6 @@
 import React,{ useState } from 'react'
 import './LoginSignup.css'
-import imageU from './vedio-calling-image.jpg' 
+import vedioCalling from './vedio-calling-image.jpg' 
 
 const LoginSignup = () => {
 
@@ -19,9 +19,9 @@ const LoginSignup = () => {
             <div className='button-4'>
                 <div>Continue with Google</div>
             </div>
-            <div className='button-4'>
+            {/* <div className='button-4'>
                 <div>Continue with Slack</div>
-            </div>
+            </div> */}
             </div>
 
             <div>or</div>
@@ -50,7 +50,7 @@ const LoginSignup = () => {
       
         </div>
         <div className='vedio-calling-image'>
-            <img src={imageU} alt='Vedio calling'/>
+            <img src={vedioCalling} alt='Vedio calling image'/>
             
         </div>
 
