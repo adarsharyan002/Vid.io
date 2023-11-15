@@ -117,35 +117,39 @@ const Room = () => {
         }
      },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal])
     return (
-        <div>
+        <div className='flex justify-center w-full h-screen'>
+          <div className='bg-blue-200 w-1/4'>
             <h1>Room</h1>
             {myStream && <button onClick={sendStreams}>Send Stream</button>}
              {remoteSocketId?<h1>Connected</h1>:null}
              {remoteSocketId && <button onClick={handleCall}>Call</button>}
+             </div>
+             <div className='bg-gray-200 w-9/12  flex justify-center space-x-3 '>
             {myStream && (
                  
-                <div>
-                    <h2>My video</h2>
+                <div className='flex flex-col justify-center items-center  border-4 divide-black' >
+                    <h2 className='font-bold text-2xl'>My video</h2>
                 <ReactPlayer 
                 playing
                 muted
-                height='200px'
-                width='300px'
+                height='100%'
+                width='100%'
                 url={myStream}/>
                 </div>
             )}
              {remoteStream && (
-        <>
-          <h1>Remote Stream</h1>
+        <div className='flex flex-col justify-center items-center border-4'>
+          <h1 className='font-bold text-2xl'>Friend</h1>
           <ReactPlayer
             playing
             muted
-            height="200px"
-            width="400px"
+            height="100%"
+            width="100%"
             url={remoteStream}
           />
-        </>
+        </div>
       )}
+        </div>
         </div>
      );
 }
