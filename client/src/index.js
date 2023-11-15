@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {BrowserRouter} from 'react-router-dom'
 import { SocketProvider } from './context/SocketProvide';
-import configureStore from './redux/configureStore';
+import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
 
 import './index.css';

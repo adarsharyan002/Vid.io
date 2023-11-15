@@ -50,7 +50,7 @@ const LoginSignup = () => {
       
         </div>
         <div className='vedio-calling-image'>
-            <img src={vedioCalling} alt='Vedio calling image'/>
+            <img src={vedioCalling} alt='Vedio calling '/>
             
         </div>
 

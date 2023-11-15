@@ -1,7 +1,7 @@
 import {useEffect,useCallback,useState } from 'react';
 import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
-import Peer from '../services/peer';
+import Peer from '../services/Peer';
 
 const Room = () => {
 
@@ -21,34 +21,32 @@ const Room = () => {
 
     const handleCall = useCallback(async()=>{
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio:true,
-            video:true
-        })
-
+       
         const offer = await Peer.getOffer();
         socket.emit("user:call",{to:remoteSocketId, offer})
-       setStream(stream);
+       
     },[socket,remoteSocketId])
+    const sendStreams = useCallback(() => {
+      for (const track of myStream.getTracks()) {
+        Peer.peer.addTrack(track, myStream);
+      }
+    }, [myStream]);
 
     const handleIncomingCall = useCallback(async({from,offer})=>{
        const ans = await Peer.getAnswer(offer)
        setRemoteSocketId(from);
 
-       const stream = await navigator.mediaDevices.getUserMedia({
-        audio:true,
-        video:true
-    })
-    setStream(stream);
+    //    const stream = await navigator.mediaDevices.getUserMedia({
+    //     audio:true,
+    //     video:true
+    // })
+    // setStream(stream);
     socket.emit("call:accepted",{to:from,ans})
+
 
     },[socket])
 
-    const sendStreams = useCallback(() => {
-        for (const track of myStream.getTracks()) {
-          Peer.peer.addTrack(track, myStream);
-        }
-      }, [myStream]);
+  
 
     const handleAcceptedCall = useCallback(({from,ans})=>{
            Peer.setLocalDescription(ans);
@@ -80,7 +78,19 @@ const Room = () => {
       const handleNegoNeedFinal = useCallback(async ({ ans }) => {
         await Peer.setLocalDescription(ans);
       }, []);
+
+      const videoSetter = async()=>{
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio:true,
+          video:true
+      })
+      setStream(stream);
+
+      }
     
+      useEffect( ()=>{
+      videoSetter();
+      },[])
      
     useEffect(() => {
         Peer.peer.addEventListener("track", async (ev) => {
