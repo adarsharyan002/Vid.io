@@ -2,22 +2,19 @@ import {useEffect,useCallback,useState } from 'react';
 import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
 import Peer from '../services/Peer';
-
+import useCall from '../socket/useCall'
 const Room = () => {
 
     const socket = useSocket();
+    const {handleUserJoined} = useCall();
     const [remoteSocketId,setRemoteSocketId] =useState(null);
     const [myStream,setStream] = useState(null);
     const [remoteStream,setRemoteStream] = useState(null);
+    
 
 
 
-
-    const handleUserJoined = useCallback(({email,id})=>{
-         
-          setRemoteSocketId(id);
-          console.log(`email ${email} joined room`)
-    },[])
+    
 
     const handleCall = useCallback(async()=>{
 
@@ -26,6 +23,7 @@ const Room = () => {
         socket.emit("user:call",{to:remoteSocketId, offer})
        
     },[socket,remoteSocketId])
+    
     const sendStreams = useCallback(() => {
       for (const track of myStream.getTracks()) {
         Peer.peer.addTrack(track, myStream);
@@ -100,7 +98,7 @@ const Room = () => {
         });
       }, []);
      useEffect(()=>{
-        socket.on("user:joined",handleUserJoined);
+        socket.on("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId));
         socket.on("incoming:call",handleIncomingCall);
         socket.on("call:accepted",handleAcceptedCall);
         socket.on("peer:nego:needed", handleNegoNeedIncomming);
@@ -108,7 +106,7 @@ const Room = () => {
 
 
         return ()=> {
-            socket.off("user:joined",handleUserJoined)
+            socket.off("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId))
             socket.off("incoming:call",handleIncomingCall);
             socket.off("call:accepted",handleAcceptedCall);
             socket.off("peer:nego:needed", handleNegoNeedIncomming);
