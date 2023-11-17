@@ -8,13 +8,17 @@ const mapEmailToId = new Map();
 
         socket.emit("me", socket.id);
     
-        socket.on("room:join", (data) => {
-           const {email,room} =data;
+        socket.on("room:join", ({email,room}) => {
+           
            mapEmailToId.set(email,socket.id);
            mapIdToEmail.set(socket.id,email);
            io.to(room).emit("user:joined",{email,id:socket.id})
            socket.join(room);
-           io.to(socket.id).emit("room:join",data);
+
+           let [remoteId] = mapIdToEmail.keys();
+           if(remoteId == socket.id)remoteId=null; 
+           
+           io.to(socket.id).emit("room:join",{room,remoteId});
         
     
         });

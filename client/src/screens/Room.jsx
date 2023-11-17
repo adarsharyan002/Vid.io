@@ -3,27 +3,27 @@ import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
 import Peer from '../services/Peer';
 import useCall from '../socket/useCall'
+import { useParams } from 'react-router-dom';
+
 const Room = () => {
 
     const socket = useSocket();
-    const {handleUserJoined} = useCall();
+    const { data } = useParams();
+    
+    const {handleUserJoined,handleCall} = useCall();
     const [remoteSocketId,setRemoteSocketId] =useState(null);
     const [myStream,setStream] = useState(null);
     const [remoteStream,setRemoteStream] = useState(null);
+    const [remoteUserName,setRemoteUserName] =useState(null)
     
 
 
 
     
 
-    const handleCall = useCallback(async()=>{
-
-       
-        const offer = await Peer.getOffer();
-        socket.emit("user:call",{to:remoteSocketId, offer})
-       
-    },[socket,remoteSocketId])
     
+
+
     const sendStreams = useCallback(() => {
       for (const track of myStream.getTracks()) {
         Peer.peer.addTrack(track, myStream);
@@ -40,6 +40,7 @@ const Room = () => {
     // })
     // setStream(stream);
     socket.emit("call:accepted",{to:from,ans})
+    
 
 
     },[socket])
@@ -58,6 +59,7 @@ const Room = () => {
         socket.emit("peer:nego:needed", { offer, to: remoteSocketId });
       }, [remoteSocketId, socket]);
     
+
       useEffect(() => {
         Peer.peer.addEventListener("negotiationneeded", handleNegoNeeded);
         return () => {
@@ -65,10 +67,12 @@ const Room = () => {
         };
       }, [handleNegoNeeded]);
 
+
       const handleNegoNeedIncomming = useCallback(
         async ({ from, offer }) => {
           const ans = await Peer.getAnswer(offer);
           socket.emit("peer:nego:done", { to: from, ans });
+          
         },
         [socket]
       );
@@ -88,6 +92,7 @@ const Room = () => {
     
       useEffect( ()=>{
       videoSetter();
+      setRemoteSocketId(data);
       },[])
      
     useEffect(() => {
@@ -97,8 +102,9 @@ const Room = () => {
           setRemoteStream(remoteStream[0]);
         });
       }, []);
+
      useEffect(()=>{
-        socket.on("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId));
+        socket.on("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId,setRemoteUserName));
         socket.on("incoming:call",handleIncomingCall);
         socket.on("call:accepted",handleAcceptedCall);
         socket.on("peer:nego:needed", handleNegoNeedIncomming);
@@ -106,7 +112,7 @@ const Room = () => {
 
 
         return ()=> {
-            socket.off("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId))
+            socket.off("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId,setRemoteUserName))
             socket.off("incoming:call",handleIncomingCall);
             socket.off("call:accepted",handleAcceptedCall);
             socket.off("peer:nego:needed", handleNegoNeedIncomming);
@@ -120,7 +126,7 @@ const Room = () => {
             <h1>Room</h1>
             {myStream && <button onClick={sendStreams}>Send Stream</button>}
              {remoteSocketId?<h1>Connected</h1>:null}
-             {remoteSocketId && <button onClick={handleCall}>Call</button>}
+             {remoteSocketId?<><button onClick={()=>handleCall(remoteSocketId)}>Call</button>:<p>{remoteUserName}</p></>:<p>Room is Empty</p> }
              </div>
              <div className='bg-gray-200 w-9/12  flex justify-center space-x-3 '>
             {myStream && (

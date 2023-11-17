@@ -7,6 +7,7 @@ const LobbyScreen = () => {
     const [room,setRoom] = useState('')
     const socket = useSocket();
     const navigate = useNavigate();
+  
 
     const handleSubmitForm=useCallback((e)=>{
         e.preventDefault();
@@ -15,15 +16,18 @@ const LobbyScreen = () => {
 
     },[email,room,socket])
 
-    const handleJoinRoom = useCallback((data)=>{
-     const {room} = data;
-      navigate(`room/${room}`)
+    const handleJoinRoom = useCallback(({room,remoteId})=>{
+     
 
-    },[navigate])
+     console.log(remoteId)
+      navigate(`room/${room}/${remoteId}`)
+
+    },[])
 
     //handling the event
     useEffect(()=>{
         socket.on("room:join",handleJoinRoom)
+
 
         //deregister a register as we dont want multiple eventlisteners
         return ()=>{
