@@ -3,23 +3,25 @@ import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
 import Peer from '../services/Peer';
 import useCall from '../socket/useCall'
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const Room = () => {
 
     const socket = useSocket();
-    const { data } = useParams();
+    const location = useLocation();
+    
+    
     
     const {handleUserJoined,handleCall} = useCall();
     const [remoteSocketId,setRemoteSocketId] =useState(null);
     const [myStream,setStream] = useState(null);
     const [remoteStream,setRemoteStream] = useState(null);
     const [remoteUserName,setRemoteUserName] =useState(null)
-    
+    const [incomingCall,setIncomingCall]=useState(false)
 
 
 
-    
+    console.log(location.state)
 
     
 
@@ -30,16 +32,23 @@ const Room = () => {
       }
     }, [myStream]);
 
+    const handleAcceptCall = useCallback(()=>{
+      setIncomingCall(false)
+      sendStreams();
+    },[sendStreams])
+
+    // const handleRejectCall= useCallback(()=>{
+    //   Peer.closeConnection();
+    //   setRemoteStream(0);
+    // },[])
+
     const handleIncomingCall = useCallback(async({from,offer})=>{
        const ans = await Peer.getAnswer(offer)
        setRemoteSocketId(from);
 
-    //    const stream = await navigator.mediaDevices.getUserMedia({
-    //     audio:true,
-    //     video:true
-    // })
-    // setStream(stream);
+   
     socket.emit("call:accepted",{to:from,ans})
+    setIncomingCall(true)
     
 
 
@@ -92,8 +101,10 @@ const Room = () => {
     
       useEffect( ()=>{
       videoSetter();
-      setRemoteSocketId(data);
-      },[])
+      if(location.state.remoteId !== 0) {
+        setRemoteUserName(location.state.userName)
+        setRemoteSocketId(location.state.remoteId)};
+      },[location.state.remoteId, location.state.userName])
      
     useEffect(() => {
         Peer.peer.addEventListener("track", async (ev) => {
@@ -124,7 +135,9 @@ const Room = () => {
         <div className='flex justify-center w-full h-screen'>
           <div className='bg-blue-200 w-1/4'>
             <h1>Room</h1>
-            {myStream && <button onClick={sendStreams}>Send Stream</button>}
+            {incomingCall && <button onClick={handleAcceptCall}>Accept Call</button>}
+            {/* {incomingCall && <button onClick={handleRejectCall}>RejectCall</button>} */}
+
              {remoteSocketId?<h1>Connected</h1>:null}
              {remoteSocketId?<><button onClick={()=>handleCall(remoteSocketId)}>Call</button>:<p>{remoteUserName}</p></>:<p>Room is Empty</p> }
              </div>

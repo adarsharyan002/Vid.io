@@ -36,6 +36,12 @@ class PeerService {
         return offer;
       }
     }
+    closeConnection() {
+      if (this.peer) {
+        this.peer.close();
+        this.peer = null; // Reset peer to allow for re-initialization
+      }
+    }
   }
   
   const service = new PeerService();

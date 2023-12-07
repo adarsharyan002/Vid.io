@@ -16,9 +16,11 @@ const mapEmailToId = new Map();
            socket.join(room);
 
            let [remoteId] = mapIdToEmail.keys();
-           if(remoteId == socket.id)remoteId=null; 
+           let userName = mapIdToEmail.get(remoteId);
+
+           if(remoteId == socket.id)remoteId=0; 
            
-           io.to(socket.id).emit("room:join",{room,remoteId});
+           io.to(socket.id).emit("room:join",{room,remoteId,userName});
         
     
         });

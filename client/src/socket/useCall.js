@@ -27,29 +27,14 @@ function useCall() {
   },[socket])
 
 
-//   const handleIncomingCall = useCallback(async(data,setRemoteSocketId)=>{
 
-//     const {from,offer} = data;
-//     const ans = await Peer.getAnswer(offer)
-//     setRemoteSocketId(from);
-
-//  //    const stream = await navigator.mediaDevices.getUserMedia({
-//  //     audio:true,
-//  //     video:true
-//  // })
-//  // setStream(stream);
-//  socket.emit("call:accepted",{to:from,ans})
-
-
-//  },[socket])
-  
   
     
   
     return {
       handleUserJoined,
       handleCall,
-      // handleIncomingCall
+      
       
     };
   }

@@ -16,13 +16,13 @@ const LobbyScreen = () => {
 
     },[email,room,socket])
 
-    const handleJoinRoom = useCallback(({room,remoteId})=>{
-     
+    const handleJoinRoom = useCallback(({room,remoteId,userName})=>{
+       
+         const data={remoteId,userName}
+         navigate(`/room/${room}`,{state:data});
+      
 
-     console.log(remoteId)
-      navigate(`room/${room}/${remoteId}`)
-
-    },[])
+    },[navigate])
 
     //handling the event
     useEffect(()=>{
