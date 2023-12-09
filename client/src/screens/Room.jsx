@@ -12,6 +12,7 @@ const Room = () => {
     
     
     
+    
     const {handleUserJoined,handleCall} = useCall();
     const [remoteSocketId,setRemoteSocketId] =useState(null);
     const [myStream,setStream] = useState(null);
@@ -22,14 +23,21 @@ const Room = () => {
 
 
     console.log(location.state)
+    console.log(`remote stream ${remoteStream}`)
 
     
 
 
     const sendStreams = useCallback(() => {
-      for (const track of myStream.getTracks()) {
-        Peer.peer.addTrack(track, myStream);
+      console.log('this is myStream'+ myStream)
+      if (myStream) {
+        for (const track of myStream.getTracks()) {
+          if (Peer.peer) {
+            Peer.peer.addTrack(track, myStream);
+          }
+        }
       }
+     
     }, [myStream]);
 
     const handleAcceptCall = useCallback(()=>{
@@ -37,10 +45,20 @@ const Room = () => {
       sendStreams();
     },[sendStreams])
 
-    // const handleRejectCall= useCallback(()=>{
-    //   Peer.closeConnection();
-    //   setRemoteStream(0);
-    // },[])
+    const handleRejectCall= useCallback(()=>{
+      socket.emit("call:reject",{to:remoteSocketId,room:location.state.room})
+      Peer.closeConnection();
+      
+          
+      setRemoteStream(null);
+
+      setIncomingCall(false)
+      // window.location.reload();
+      window.location.href = '/';
+     
+
+      
+    },[location.state.room, remoteSocketId, socket])
 
     const handleIncomingCall = useCallback(async({from,offer})=>{
        const ans = await Peer.getAnswer(offer)
@@ -62,6 +80,20 @@ const Room = () => {
            sendStreams();
 
     },[sendStreams])
+
+    const handleRejectedCall =useCallback(()=>{
+      Peer.closeConnection();
+      
+     
+    setRemoteStream(null);
+    setIncomingCall(false);
+    // window.location.reload();
+    // await socket.leave(location.state.room)
+    socket.emit("leave:room",{room:location.state.room})
+
+    window.location.href = '/';
+
+    },[location.state.room, socket])
 
     const handleNegoNeeded = useCallback(async () => {
         const offer = await Peer.getOffer();
@@ -112,7 +144,7 @@ const Room = () => {
           console.log("GOT TRACKS!!");
           setRemoteStream(remoteStream[0]);
         });
-      }, []);
+      }, []); 
 
      useEffect(()=>{
         socket.on("user:joined",(data)=>handleUserJoined(data,setRemoteSocketId,setRemoteUserName));
@@ -120,6 +152,8 @@ const Room = () => {
         socket.on("call:accepted",handleAcceptedCall);
         socket.on("peer:nego:needed", handleNegoNeedIncomming);
     socket.on("peer:nego:final", handleNegoNeedFinal);
+    socket.on("call:reject", handleRejectedCall);
+
 
 
         return ()=> {
@@ -128,15 +162,17 @@ const Room = () => {
             socket.off("call:accepted",handleAcceptedCall);
             socket.off("peer:nego:needed", handleNegoNeedIncomming);
       socket.off("peer:nego:final", handleNegoNeedFinal);
+      socket.off("call:reject", handleRejectedCall);
+
 
         }
-     },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal])
+     },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal, handleRejectedCall])
     return (
         <div className='flex justify-center w-full h-screen'>
           <div className='bg-blue-200 w-1/4'>
             <h1>Room</h1>
             {incomingCall && <button onClick={handleAcceptCall}>Accept Call</button>}
-            {/* {incomingCall && <button onClick={handleRejectCall}>RejectCall</button>} */}
+            {incomingCall && <button onClick={handleRejectCall}>Reject Call</button>}
 
              {remoteSocketId?<h1>Connected</h1>:null}
              {remoteSocketId?<><button onClick={()=>handleCall(remoteSocketId)}>Call</button>:<p>{remoteUserName}</p></>:<p>Room is Empty</p> }
@@ -164,6 +200,7 @@ const Room = () => {
             width="100%"
             url={remoteStream}
           />
+          <button onClick={handleRejectCall}>End Call</button>
         </div>
       )}
         </div>

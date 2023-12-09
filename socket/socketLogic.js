@@ -38,6 +38,16 @@ const mapEmailToId = new Map();
         socket.on("peer:nego:done", ({to,ans}) => {
             io.to(to).emit("peer:nego:final", { from:socket.id,ans });
         });
+        socket.on("call:reject", ({to,room}) => {
+            socket.leave(room);
+            mapEmailToId.clear();
+            mapIdToEmail.clear();
+            io.to(to).emit("call:reject", { from:socket.id });
+        });
+        socket.on("leave:room", ({room}) => {
+            socket.leave(room);
+           
+        });
 }
 
 module.exports={

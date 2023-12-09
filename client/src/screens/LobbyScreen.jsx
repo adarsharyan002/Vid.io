@@ -18,7 +18,7 @@ const LobbyScreen = () => {
 
     const handleJoinRoom = useCallback(({room,remoteId,userName})=>{
        
-         const data={remoteId,userName}
+         const data={remoteId,userName,room}
          navigate(`/room/${room}`,{state:data});
       
 
