@@ -32,29 +32,35 @@ const Room = () => {
 
 
     const sendStreams = useCallback(() => {
-
       try {
-        if (myStream) {
+        if (myStream && Peer.peer) {
+          const existingSenders = Peer.peer.getSenders();
+    
           for (const track of myStream.getTracks()) {
-            if (Peer.peer) {
+            let trackExists = false;
+    
+            for (const sender of existingSenders) {
+              if (sender.track === track) {
+                trackExists = true;
+                break;
+              }
+            }
+    
+            if (!trackExists) {
               Peer.peer.addTrack(track, myStream);
             }
           }
         }
-        
       } catch (error) {
-        console.log(error)
-        
+        console.log(error);
       }
-     
-      
-     
     }, [myStream]);
+    
 
-    // const handleAcceptCall = useCallback(()=>{
-    //   setIncomingCall(false)
-    //   sendStreams();
-    // },[sendStreams])
+    const handleAcceptCall = useCallback(()=>{
+    
+      sendStreams();
+    },[sendStreams])
 
     const handleRejectCall= useCallback(()=>{
       socket.emit("call:reject",{to:remoteSocketId,room:location.state.room})
@@ -74,9 +80,11 @@ const Room = () => {
     const handleIncomingCall = useCallback(async({from,offer})=>{
        const ans = await Peer.getAnswer(offer)
        setRemoteSocketId(from);
+       
 
    
     socket.emit("call:accepted",{to:from,ans})
+    
     // setIncomingCall(true)
     
 
@@ -89,6 +97,8 @@ const Room = () => {
            Peer.setLocalDescription(ans);
            console.log('Call Accepted');
            sendStreams();
+          //  socket.emit("sendStreams",{to:from})
+           
 
     },[sendStreams])
 
@@ -133,6 +143,7 @@ const Room = () => {
     
       const handleNegoNeedFinal = useCallback(async ({ ans }) => {
         await Peer.setLocalDescription(ans);
+        // sendStreams()
 
       }, []);
 
@@ -165,6 +176,7 @@ const Room = () => {
         socket.on("incoming:call",handleIncomingCall);
         socket.on("call:accepted",handleAcceptedCall);
         socket.on("peer:nego:needed", handleNegoNeedIncomming);
+        socket.on("sendStreams", handleAcceptCall);
     socket.on("peer:nego:final", handleNegoNeedFinal);
     socket.on("call:reject", handleRejectedCall);
 
@@ -175,12 +187,14 @@ const Room = () => {
             socket.off("incoming:call",handleIncomingCall);
             socket.off("call:accepted",handleAcceptedCall);
             socket.off("peer:nego:needed", handleNegoNeedIncomming);
+            socket.on("sendStreams", handleAcceptCall);
+
       socket.off("peer:nego:final", handleNegoNeedFinal);
       socket.off("call:reject", handleRejectedCall);
 
 
         }
-     },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal, handleRejectedCall])
+     },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal, handleRejectedCall, handleAcceptCall])
     return (
         <div className='flex justify-center w-full h-screen p-5'>
         {!remoteStream &&
@@ -239,7 +253,6 @@ const Room = () => {
              
             }
             {remoteStream && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
-      
         </div>
         </div>
         </div>

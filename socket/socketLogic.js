@@ -42,6 +42,9 @@ const mapEmailToId = new Map();
         socket.on("call:accepted", ({to,ans}) => {
             io.to(to).emit("call:accepted", { from:socket.id,ans });
         });
+        socket.on("sendStreams",({to})=>{
+            io.to(to).emit("sendStreams",{from:socket.id})
+        });
         socket.on("peer:nego:needed", ({to,offer}) => {
             io.to(to).emit("peer:nego:needed", { from:socket.id,offer });
         });
