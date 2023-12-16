@@ -12,6 +12,7 @@ import {io} from 'socket.io-client'
  export const SocketProvider = (props)=>{
 
     const socket = useMemo(()=> io("https://vid-io-api.onrender.com"),[]);
+    
 
 
     return (

@@ -19,6 +19,9 @@ const Room = () => {
     const [myStream,setStream] = useState(null);
     const [remoteStream,setRemoteStream] = useState(null);
     const [remoteUserName,setRemoteUserName] =useState(null)
+    const [incomingCall,setIncomingCall]=useState(false)
+    const [showBar,setShowBar] = useState(true)
+    const [calling, setCalling] = useState(false);
    
 
 
@@ -28,7 +31,7 @@ const Room = () => {
     console.log(remoteStream)
     console.log(myStream)
 
-    
+  
 
 
     const sendStreams = useCallback(() => {
@@ -58,9 +61,11 @@ const Room = () => {
     
 
     const handleAcceptCall = useCallback(()=>{
-    
+      setShowBar(false)
+      setIncomingCall(false)
       sendStreams();
-    },[sendStreams])
+      socket.emit('accepted:call:final',{to:remoteSocketId})
+    },[remoteSocketId, sendStreams, socket])
 
     const handleRejectCall= useCallback(()=>{
       socket.emit("call:reject",{to:remoteSocketId,room:location.state.room})
@@ -85,7 +90,7 @@ const Room = () => {
    
     socket.emit("call:accepted",{to:from,ans})
     
-    // setIncomingCall(true)
+    setIncomingCall(true)
     
 
 
@@ -179,6 +184,7 @@ const Room = () => {
         socket.on("sendStreams", handleAcceptCall);
     socket.on("peer:nego:final", handleNegoNeedFinal);
     socket.on("call:reject", handleRejectedCall);
+    socket.on("accepted:call:final",()=>setShowBar(false))
 
 
 
@@ -197,7 +203,7 @@ const Room = () => {
      },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal, handleRejectedCall, handleAcceptCall])
     return (
         <div className='flex justify-center w-full h-screen p-5'>
-        {!remoteStream &&
+        {showBar &&
           <div className='bg-blue-100 rounded-lg p-2 w-1/4'>
             <div className='flex gap-3 content-center items-center m-4'>
               <button className='bg-blue-400 rounded-full w-16 h-16 text-2xl text-white' >V</button>
@@ -210,14 +216,23 @@ const Room = () => {
               <div className='w-3 h-3 bg-green-500 rounded-full'></div>
               <p>{remoteUserName}</p>
               
-              </div>:<p>Room is Empty</p> }
+              </div>
+              
+              
+              :<p>Room is Empty</p>
+              
+              }
+              
 
             </div>
-            {remoteSocketId?<button className='w-full bg-blue-400 rounded-lg text-white h-10 mt-3' onClick={()=>handleCall(remoteSocketId)}>Call</button>:null}
+            {!incomingCall && remoteSocketId && <button className='w-full bg-blue-400 rounded-lg text-white h-10 mt-3' onClick={()=>handleCall(remoteSocketId,setCalling,calling)} disabled={calling}>
+            {calling ? 'Calling...' : 'Call'}
+              </button>}
             
 
              
-
+            {incomingCall && <div className='flex gap-2 justify-center mt-2'><button className='w-1/2 h-9 bg-red-500 rounded-lg text-white' onClick={handleAcceptCall}>Accept</button>
+        <button className=' w-1/2 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>Leave Room</button></div>}
              </div>
              
 }
@@ -242,7 +257,7 @@ const Room = () => {
                 
                 </div>
             )}
-            { remoteStream && 
+            { !showBar && remoteStream && 
            
            
             <div className='flex flex-col justify-center items-center '>
@@ -252,9 +267,10 @@ const Room = () => {
              
              
             }
-            {remoteStream && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
+            {remoteStream && !incomingCall && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
         </div>
-        <button onClick={handleAcceptCall}>Accept</button>
+        
+{!calling && !incomingCall && !remoteStream && <button className=' w-45 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>Leave Room</button>}
         </div>
         </div>
      );

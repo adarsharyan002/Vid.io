@@ -19,8 +19,9 @@ function useCall() {
 
 
 
-    const handleCall = useCallback(async(remoteSocketId)=>{
-
+    const handleCall = useCallback(async(remoteSocketId,setCalling,calling)=>{
+      
+      setCalling(true);
       const offer = await Peer.getOffer();
       socket.emit("user:call",{to:remoteSocketId, offer})
      

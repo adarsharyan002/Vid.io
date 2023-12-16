@@ -10,10 +10,19 @@ const mapEmailToId = new Map();
         socket.emit("me", socket.id);
     
         socket.on("room:join", ({email,room}) => {
-            // roomSize = io.sockets.adapter.rooms[room]?.length;
-            // roomSize=io.sockets.adapter.rooms.get(room)?.length
-            const roomSize=mapEmailToId.size;
-            console.log(roomSize)
+            let roomSize
+            
+            if(io.of("/").adapter.rooms.has(room)){
+                const rooms = io.of("/").adapter.rooms;
+                roomSize = rooms.get(room).size
+
+            }else roomSize =0
+            
+
+
+
+            
+            
            
           if(roomSize < 2) {
            mapEmailToId.set(email,socket.id);
@@ -21,6 +30,11 @@ const mapEmailToId = new Map();
            io.to(room).emit("user:joined",{email,id:socket.id})
            
             socket.join(room);
+           
+           
+            
+            
+
             
 
            let [remoteId] = mapIdToEmail.keys();
@@ -42,9 +56,9 @@ const mapEmailToId = new Map();
         socket.on("call:accepted", ({to,ans}) => {
             io.to(to).emit("call:accepted", { from:socket.id,ans });
         });
-        socket.on("sendStreams",({to})=>{
-            io.to(to).emit("sendStreams",{from:socket.id})
-        });
+        socket.on("accepted:call:final",({to}) => {
+             io.to(to).emit("accepted:call:final",{from:socket.id});
+        })
         socket.on("peer:nego:needed", ({to,offer}) => {
             io.to(to).emit("peer:nego:needed", { from:socket.id,offer });
         });
