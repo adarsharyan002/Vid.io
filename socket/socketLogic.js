@@ -1,6 +1,7 @@
 
 const mapIdToEmail = new Map();
 const mapEmailToId = new Map();
+
  const socketHandler =(io,socket)=>{
           
 
@@ -9,11 +10,18 @@ const mapEmailToId = new Map();
         socket.emit("me", socket.id);
     
         socket.on("room:join", ({email,room}) => {
+            // roomSize = io.sockets.adapter.rooms[room]?.length;
+            // roomSize=io.sockets.adapter.rooms.get(room)?.length
+            const roomSize=mapEmailToId.size;
+            console.log(roomSize)
            
+          if(roomSize < 2) {
            mapEmailToId.set(email,socket.id);
            mapIdToEmail.set(socket.id,email);
            io.to(room).emit("user:joined",{email,id:socket.id})
-           socket.join(room);
+           
+            socket.join(room);
+            
 
            let [remoteId] = mapIdToEmail.keys();
            let userName = mapIdToEmail.get(remoteId);
@@ -21,6 +29,8 @@ const mapEmailToId = new Map();
            if(remoteId == socket.id)remoteId=0; 
            
            io.to(socket.id).emit("room:join",{room,remoteId,userName});
+        }
+        else io.to(socket.id).emit("cannot:join",{room})
         
     
         });
@@ -42,6 +52,7 @@ const mapEmailToId = new Map();
             socket.leave(room);
             mapEmailToId.clear();
             mapIdToEmail.clear();
+           
             io.to(to).emit("call:reject", { from:socket.id });
         });
         socket.on("leave:room", ({room}) => {

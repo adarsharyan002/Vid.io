@@ -4,6 +4,7 @@ import ReactPlayer from 'react-player'
 import Peer from '../services/Peer';
 import useCall from '../socket/useCall'
 import { useLocation } from 'react-router-dom';
+import VideoPlayer from '../components/VideoPlayer';
 
 const Room = () => {
 
@@ -19,24 +20,35 @@ const Room = () => {
     const [remoteStream,setRemoteStream] = useState(null);
     const [remoteUserName,setRemoteUserName] =useState(null)
     const [incomingCall,setIncomingCall]=useState(false)
+   
 
 
 
-    console.log(location.state)
-    console.log(`remote stream ${remoteStream}`)
+
+    
+    console.log(remoteStream)
+    console.log(myStream)
 
     
 
 
     const sendStreams = useCallback(() => {
-      console.log('this is myStream'+ myStream)
-      if (myStream) {
-        for (const track of myStream.getTracks()) {
-          if (Peer.peer) {
-            Peer.peer.addTrack(track, myStream);
+
+      try {
+        if (myStream) {
+          for (const track of myStream.getTracks()) {
+            if (Peer.peer) {
+              Peer.peer.addTrack(track, myStream);
+            }
           }
         }
+        
+      } catch (error) {
+        console.log(error)
+        
       }
+     
+      
      
     }, [myStream]);
 
@@ -111,15 +123,18 @@ const Room = () => {
 
       const handleNegoNeedIncomming = useCallback(
         async ({ from, offer }) => {
+          
           const ans = await Peer.getAnswer(offer);
           socket.emit("peer:nego:done", { to: from, ans });
+          sendStreams()
           
         },
-        [socket]
+        [sendStreams, socket]
       );
     
       const handleNegoNeedFinal = useCallback(async ({ ans }) => {
         await Peer.setLocalDescription(ans);
+
       }, []);
 
       const videoSetter = async()=>{
@@ -168,41 +183,65 @@ const Room = () => {
         }
      },[socket, handleUserJoined, handleIncomingCall, handleAcceptedCall, handleNegoNeedIncomming, handleNegoNeedFinal, handleRejectedCall])
     return (
-        <div className='flex justify-center w-full h-screen'>
-          <div className='bg-blue-200 w-1/4'>
-            <h1>Room</h1>
-            {incomingCall && <button onClick={handleAcceptCall}>Accept Call</button>}
-            {incomingCall && <button onClick={handleRejectCall}>Reject Call</button>}
+        <div className='flex justify-center w-full h-screen p-5'>
+        {!remoteStream &&
+          <div className='bg-blue-100 rounded-lg p-2 w-1/4'>
+            <div className='flex gap-3 content-center items-center m-4'>
+              <button className='bg-blue-400 rounded-full w-16 h-16 text-2xl text-white' >V</button>
+            <h1 className='text-lg font-bold'>
+              Vid.io
+            </h1>
+            </div>
+            <div className=' flex justify-center items-center w-full text-md font-bold  bg-white h-10 rounded-lg'>
+            {remoteSocketId?<div className='flex justify-center content-center items-center gap-2'>
+              <div className='w-3 h-3 bg-green-500 rounded-full'></div>
+              <p>{remoteUserName}</p>
+              
+              </div>:<p>Room is Empty</p> }
 
-             {remoteSocketId?<h1>Connected</h1>:null}
-             {remoteSocketId?<><button onClick={()=>handleCall(remoteSocketId)}>Call</button>:<p>{remoteUserName}</p></>:<p>Room is Empty</p> }
+            </div>
+            {remoteSocketId?<button className='w-full bg-blue-400 rounded-lg text-white h-10 mt-3' onClick={()=>handleCall(remoteSocketId)}>Call</button>:null}
+            
+
+             
+
              </div>
-             <div className='bg-gray-200 w-9/12  flex justify-center space-x-3 '>
+             
+}
+             <div className=' w-full  flex justify-center space-x-3 '>
+              
+
+            <div className='flex justify-center content-center items-center gap-3'>
             {myStream && (
                  
-                <div className='flex flex-col justify-center items-center  border-4 divide-black' >
+                <div className='flex flex-col justify-center items-center  ' >
                     <h2 className='font-bold text-2xl'>My video</h2>
+                    <div>
                 <ReactPlayer 
+                className='border-4 border-blue-400 rounded-lg'
                 playing
                 muted
                 height='100%'
                 width='100%'
                 url={myStream}/>
+                
+                </div>
+                
                 </div>
             )}
-             {remoteStream && (
-        <div className='flex flex-col justify-center items-center border-4'>
-          <h1 className='font-bold text-2xl'>Friend</h1>
-          <ReactPlayer
-            playing
-            muted
-            height="100%"
-            width="100%"
-            url={remoteStream}
-          />
-          <button onClick={handleRejectCall}>End Call</button>
+            { remoteStream && 
+           
+           
+            <div className='flex flex-col justify-center items-center '>
+             <VideoPlayer remoteStream={remoteStream}/>
+             
+             </div>
+             
+             
+            }
+            {remoteStream && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
+      
         </div>
-      )}
         </div>
         </div>
      );
