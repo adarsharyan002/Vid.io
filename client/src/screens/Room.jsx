@@ -19,7 +19,6 @@ const Room = () => {
     const [myStream,setStream] = useState(null);
     const [remoteStream,setRemoteStream] = useState(null);
     const [remoteUserName,setRemoteUserName] =useState(null)
-    const [incomingCall,setIncomingCall]=useState(false)
    
 
 
@@ -52,10 +51,10 @@ const Room = () => {
      
     }, [myStream]);
 
-    const handleAcceptCall = useCallback(()=>{
-      setIncomingCall(false)
-      sendStreams();
-    },[sendStreams])
+    // const handleAcceptCall = useCallback(()=>{
+    //   setIncomingCall(false)
+    //   sendStreams();
+    // },[sendStreams])
 
     const handleRejectCall= useCallback(()=>{
       socket.emit("call:reject",{to:remoteSocketId,room:location.state.room})
@@ -64,7 +63,7 @@ const Room = () => {
           
       setRemoteStream(null);
 
-      setIncomingCall(false)
+      // setIncomingCall(false)
       // window.location.reload();
       window.location.href = '/';
      
@@ -78,7 +77,7 @@ const Room = () => {
 
    
     socket.emit("call:accepted",{to:from,ans})
-    setIncomingCall(true)
+    // setIncomingCall(true)
     
 
 
@@ -98,7 +97,7 @@ const Room = () => {
       
      
     setRemoteStream(null);
-    setIncomingCall(false);
+    // setIncomingCall(false);
     // window.location.reload();
     // await socket.leave(location.state.room)
     socket.emit("leave:room",{room:location.state.room})
