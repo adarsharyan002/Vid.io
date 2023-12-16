@@ -10,7 +10,7 @@ const VideoPlayer = ({remoteStream}) => {
 
          className="border-4 border-blue-400 rounded-lg"
           playing
-          muted
+          
           height="100%"
           width="100%"
           url={remoteStream}
