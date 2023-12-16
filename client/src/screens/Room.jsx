@@ -270,7 +270,7 @@ const Room = () => {
             {remoteStream && !incomingCall && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
         </div>
         
-{!calling && !incomingCall && !remoteStream && <button className=' w-45 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>Leave Room</button>}
+{!calling && !incomingCall && !remoteStream && <button className=' w-1/12  justify-center content-center items-center w-45 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>Leave Room</button>}
         </div>
         </div>
      );
