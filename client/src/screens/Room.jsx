@@ -135,10 +135,10 @@ const Room = () => {
           
           const ans = await Peer.getAnswer(offer);
           socket.emit("peer:nego:done", { to: from, ans });
-          sendStreams()
+          // sendStreams()
           
         },
-        [sendStreams, socket]
+        [socket]
       );
     
       const handleNegoNeedFinal = useCallback(async ({ ans }) => {
@@ -233,7 +233,7 @@ const Room = () => {
                 <ReactPlayer 
                 className='border-4 border-blue-400 rounded-lg'
                 playing
-                
+                muted
                 height='100%'
                 width='100%'
                 url={myStream}/>
@@ -254,6 +254,7 @@ const Room = () => {
             }
             {remoteStream && <button className='fixed bottom-10 w-20 h-9 bg-red-500 rounded-lg text-white ' onClick={handleRejectCall}>End Call</button>}
         </div>
+        <button onClick={handleAcceptCall}>Accept</button>
         </div>
         </div>
      );
