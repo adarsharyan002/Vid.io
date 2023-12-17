@@ -1,10 +1,11 @@
-import {useEffect,useCallback,useState } from 'react';
+import {useEffect,useCallback,useState, lazy, Suspense } from 'react';
 import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
 import Peer from '../services/Peer';
 import useCall from '../socket/useCall'
 import { useLocation } from 'react-router-dom';
-import VideoPlayer from '../components/VideoPlayer';
+
+const VideoPlayer = lazy(()=> import('../components/VideoPlayer'))
 
 const Room = () => {
 
@@ -261,7 +262,9 @@ const Room = () => {
            
            
             <div className='flex flex-col justify-center items-center '>
+              <Suspense fallback={<div>Loading ...</div>}>
              <VideoPlayer remoteStream={remoteStream}/>
+             </Suspense>
              
              </div>
              
