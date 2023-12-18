@@ -30,7 +30,7 @@ const LoginSignup = () => {
                 <input className='input' type="text" placeholder='Username' />
             </div> */}
             <div className='inputs'>
-                <input className='input' type="email" placeholder='E-mail'/>
+                <input  className='input' type="email" placeholder='E-mail'/>
             </div>
             <div className='inputs'>
                 <input className='input' type="passwoed" placeholder='Password'/>
