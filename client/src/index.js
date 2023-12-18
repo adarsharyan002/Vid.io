@@ -13,9 +13,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <SocketProvider>
-        {/* <Provider store={configureStore}> */}
+        <Provider store={configureStore}>
           <App />
-        {/* </Provider> */}
+        </Provider>
       </SocketProvider>
     </BrowserRouter>
   </React.StrictMode>

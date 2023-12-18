@@ -1,7 +1,7 @@
 import {useEffect,useCallback,useState, lazy, Suspense } from 'react';
 import { useSocket } from '../context/SocketProvide';
 import ReactPlayer from 'react-player'
-import Peer from '../services/Peer';
+import Peer from '../services/peer';
 import useCall from '../socket/useCall'
 import { useLocation } from 'react-router-dom';
 

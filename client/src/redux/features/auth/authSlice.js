@@ -1,30 +1,57 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { json } from 'express';
 
 const initialState = {
-  value: 0,
-}
+  action: 'Create Your Account',
+  email: '',
+  password: ''
+};
 
-export const counterSlice = createSlice({
-  name: 'counter',
+export const  signUpUser = createAsyncThunk('signupuser', async()=>{
+  const res = await fetch("ddd",{
+    method:"post",
+    headers:{
+      "Content-Type":"application/json"
+
+    },
+    body: JSON.stringify(body)
+  })
+  return await res.json();
+})
+
+export const loginSignupSlice = createSlice({
+  name: 'loginSignup',
   initialState,
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1
+    setAction: (state, action) => {
+      state.action = action.payload;
     },
-    decrement: (state) => {
-      state.value -= 1
+    setEmail: (state, action) => {
+      state.email = action.payload;
     },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload
+    setPassword: (state, action) => {
+      state.password = action.payload;
+    },
+  },
+  extraReducers:  {
+    [signUpUser.pending]: (state,action)=>{
+      state.loading = true
+    },
+    [signUpUser.pending]: (state,{payloaad:{error,msg}})=>{
+      state.loading = false;
+      if(error){
+        state.error = error
+      }else{
+        state.msg = msg
+      }
+    },
+    [signUpUser.pending]: (state,action)=>{
+      state.loading = true
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions
+export const { setAction,setEmail,setPassword } = loginSignupSlice.actions
 
-export default counterSlice.reducer
+export default loginSignupSlice.reducer
