@@ -1,10 +1,19 @@
 import React,{ useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import './LoginSignup.css'
 import vedioCalling from './vedio-calling-image.jpg' 
+import { setAction,setEmail,setPassword } from '../redux/features/auth/authSlice';
+import { signUpUser } from '../redux/features/auth/authSlice';
+
 
 const LoginSignup = () => {
 
+  const dispatch = useDispatch();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [action, setAction] = useState("Create Your Account");  
+
 
   return (
     <div className='whole-page'>
@@ -19,16 +28,11 @@ const LoginSignup = () => {
             <div className='button-4'>
                 <div>Continue with Google</div>
             </div>
-            {/* <div className='button-4'>
-                <div>Continue with Slack</div>
-            </div> */}
+            
             </div>
 
             <div>or</div>
 
-            {/* <div className='inputs'>
-                <input className='input' type="text" placeholder='Username' />
-            </div> */}
             <div className='inputs'>
                 <input  className='input' type="email" placeholder='E-mail'/>
             </div>
@@ -44,13 +48,13 @@ const LoginSignup = () => {
             </div>
             <div className='already-have-an-account'>
                 {action==="Create Your Account"?<div className='text'>Already have an account? </div>:<div></div>}
-                {action==="Create Your Account"?<span className='text' onclick onClick={()=>{setAction("Sign in")}}>Sign in</span>:<div></div>}
-                {action==="Sign in"?<span className="text" onclick onClick={()=>{setAction("Create Your Account")}}>Signup</span>:<div></div>}
+                {action==="Create Your Account"?<span className='text' onclick onClick={()=>{dispatch(setAction("Sign in"))}}>Sign in</span>:<div></div>}
+                {action==="Sign in"?<span className="text" onclick onClick={()=>{dispatch(setAction("Create Your Account"))}}>Signup</span>:<div></div>}
             </div>
       
         </div>
         <div className='vedio-calling-image'>
-            <img src={vedioCalling} alt='Vedio calling '/>
+            <img src={vedioCalling} alt='Vedio calling image'/>
             
         </div>
 

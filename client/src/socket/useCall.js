@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import Peer from '../services/Peer';
+import Peer from '../services/peer';
 import { useSocket } from '../context/SocketProvide';
 
 
