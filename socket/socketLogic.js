@@ -65,6 +65,16 @@ const mapEmailToId = new Map();
         socket.on("peer:nego:done", ({to,ans}) => {
             io.to(to).emit("peer:nego:final", { from:socket.id,ans });
         });
+
+        socket.on('video:toggle', ({ isEnabled }) => {
+            // Broadcast to all other participants about video status change
+            socket.broadcast.emit('video:toggle', { isEnabled });
+          });
+        
+          socket.on('audio:toggle', ({ isEnabled }) => {
+            // Broadcast to all other participants about audio status change
+            socket.broadcast.emit('audio:toggle', { isEnabled });
+          });
         socket.on("call:reject", ({to,room}) => {
             socket.leave(room);
             mapEmailToId.clear();
