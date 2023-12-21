@@ -6,9 +6,12 @@ const Room = lazy(()=>import('./screens/Room'))
 const LoginSignup = lazy(()=>import('./components/LoginSignup'))
 
 
+
 function App() {
   return (
-    <div className="App">
+    <>
+
+       
              <Suspense fallback={<div>Loading</div>}>
 
        <Routes>
@@ -20,7 +23,7 @@ function App() {
        </Routes>
        </Suspense>
        
-    </div>
+    </>
   );
 }
 
