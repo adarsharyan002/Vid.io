@@ -1,9 +1,10 @@
 import { Routes,Route } from 'react-router-dom'
 
 import { Suspense, lazy } from 'react';
+import Login from './components/Login';
 const LobbyScreen = lazy(()=>import('./screens/LobbyScreen'))
 const Room = lazy(()=>import('./screens/Room'))
-const LoginSignup = lazy(()=>import('./components/LoginSignup'))
+const SignUp = lazy(()=>import('./components/SignUp'))
 
 
 
@@ -15,9 +16,11 @@ function App() {
              <Suspense fallback={<div>Loading</div>}>
 
        <Routes>
-        <Route path = '/' element={<LobbyScreen/>}/>
+        <Route path = '/lobby' element={<LobbyScreen/>}/>
         <Route path = '/room/:id' element={<Room/>}/>
-        <Route path = '/login' element={<LoginSignup/>}/>
+        <Route path = '/signup' element={<SignUp/>}/>
+        <Route path = '/' element={<Login/>}/>
+
         
 
        </Routes>
