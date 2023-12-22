@@ -54,7 +54,7 @@ function useCall(
         
     setRemoteStream(null);
    
-    window.location.href = '/';
+    window.location.href = '/lobby';
    
   },[location.state.room, remoteSocketId, setRemoteStream, socket])
 

@@ -32,6 +32,11 @@ const LobbyScreen = () => {
 
     },[navigate])
 
+    const handleLogout =()=>{
+      localStorage.clear();
+      navigate('/')
+    }
+
     //handling the event
     useEffect(()=>{
         socket.on("room:join",handleJoinRoom)
@@ -51,6 +56,7 @@ const LobbyScreen = () => {
     return ( 
   
 <div className="bg-gradient-to-r from-gray-800 via-black to-blue-900 flex  min-h-screen items-center justify-center">
+  <p onClick={handleLogout} className="fixed top-5 right-10 text-white cursor-pointer" >Logout</p>
 <div className='fixed top-8 left-12 z-50 w-24'>
         <img src={Logo} alt='companyLogo'/>
        </div>

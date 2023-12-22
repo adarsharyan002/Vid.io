@@ -6,17 +6,21 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       // Make API call to your backend endpoint
-      const response = await fetch('http://localhost:4000/api/v1/auth/login', {
+      const response = await fetch('https://vid-io-api.onrender.com/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        const error = await response.json();
+        console.log(error)
+        throw new Error(error.msg);
       }
 
       const data = await response.json();
+      localStorage.setItem("token", data.token);
+
       // Extract necessary data from response (e.g., token, user details)
       return data;
     } catch (error) {
@@ -30,17 +34,20 @@ export const signup = createAsyncThunk(
   async (userDetails, { rejectWithValue }) => {
     try {
       // Make API call to your backend's signup endpoint
-      const response = await fetch('http://localhost:4000/api/v1/auth/register', {
+      const response = await fetch('https://vid-io-api.onrender.com/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userDetails),
       });
 
       if (!response.ok) {
-        throw new Error('Signup failed');
+        const error = await response.json();
+        console.log(error)
+        throw new Error(error.msg);
       }
 
       const data = await response.json();
+      localStorage.setItem("token", data.token);
       // Extract necessary data from response (e.g., token, user details)
       return data;
     } catch (error) {
@@ -59,19 +66,31 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearState: (state) => {
+      // Reset the authentication state to initial values
+      state.isAuthenticated = false;
+      state.user = null;
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
-        // ... your login success logic
-        console.log('logged in')
+        // ... your login success log
+        state.loading = false;
+        state.isAuthenticated = true; // If signup automatically logs in
+        state.user = action.payload; // Assuming user data is in payload
+        state.error = null;
         
       })
       .addCase(login.rejected, (state, action) => {
-        console.log('some error')
+        state.loading = false;
+        state.error = action.payload; 
       })
       .addCase(signup.pending, (state) => {
         state.loading = true;
@@ -90,6 +109,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { actions } = authSlice;
+export const { clearState } = authSlice.actions;
 
 export default authSlice.reducer;

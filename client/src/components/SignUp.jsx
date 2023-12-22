@@ -1,10 +1,11 @@
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import logo from '../assests/logo.svg'; 
 import companyLogo from '../assests/logomain2.png';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch ,useSelector} from 'react-redux';
 import { signup } from '../redux/features/auth/authSlice';
+import { clearState } from '../redux/features/auth/authSlice';
 
 
 const SignUp = () => {
@@ -14,13 +15,19 @@ const SignUp = () => {
   const [userName,setUserName] = useState('')
   const dispatch = useDispatch();
 
+  const { user, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  )
+  const navigate =useNavigate();
+
+  
+
 // Assuming your signup action is imported
 
 const onSubmit = async (e) => {
   e.preventDefault();
+  
 
-  try {
-   
     const userDetails = {
       name:userName,
       email,
@@ -30,16 +37,20 @@ const onSubmit = async (e) => {
     // Dispatch the signup action
     await dispatch(signup(userDetails));
 
-    // Handle successful signup (e.g., redirect to a protected route)
-    // You might need to access the user's data from the Redux store here
-    console.log('Signup successful!');
-    // Example: navigate to a protected route
-    // history.push('/dashboard');
-  } catch (error) {
-    // Handle signup errors
-    setErrorMessage(error.message);
-  }
+  
 };
+
+useEffect(() => {
+  // redirect user to login page if registration was successful
+  if (isAuthenticated) navigate('/')
+  if(error)setErrorMessage(error)
+
+  return ()=>{
+    dispatch(clearState())
+  }
+  // redirect authenticated user to profile screen
+  // if (user) navigate('/user-profile')
+}, [navigate, isAuthenticated, user, error, dispatch])
 
  
 
@@ -108,7 +119,7 @@ const onSubmit = async (e) => {
 						<button onClick={onSubmit} type="submit" class="w-full flex justify-center bg-blue-900  hover:bg-blue-800 text-gray-100 p-3  rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500">
                 Sign Up
               </button>
-              <p className='mt-2'>{errorMessage}</p>
+              <p className='mt-2 text-white'>{errorMessage}</p>
 					</div>
 
               

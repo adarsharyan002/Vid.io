@@ -1,11 +1,13 @@
 
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import logo from '../assests/logo.svg'; 
 import companyLogo from '../assests/logomain2.png';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { Link,useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
 import { login } from '../redux/features/auth/authSlice';
+import { clearState } from '../redux/features/auth/authSlice';
+
 
 
 const Login = () => {
@@ -13,28 +15,35 @@ const Login = () => {
   const [errorMessage,setErrorMessage] = useState('')
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const {  user, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  )
   
+  const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
   
-    try {
-      
+    
       const credentials = { email, password };
   
       // Dispatch the login action
       await dispatch(login(credentials));
   
-      // Handle successful login (e.g., redirect to a protected route)
-      // You might need to access the user's data from the Redux store here
-      console.log('Login successful!');
-      // Example: navigate to a protected route
-      // history.push('/dashboard');
-    } catch (error) {
-      // Handle login errors
-      setErrorMessage(error.message);
-    }
+     
   };
+
+  useEffect(() => {
+    // redirect user to login page if registration was successful
+    if (isAuthenticated) navigate('/lobby')
+    if(error)setErrorMessage(error)
+  
+    return ()=>{
+      dispatch(clearState())
+    }
+    // redirect authenticated user to profile screen
+    // if (user) navigate('/user-profile')
+  }, [navigate, isAuthenticated, user, error, dispatch])
 
  
 
@@ -94,10 +103,10 @@ const Login = () => {
      
       
     </div>
-						<button onClick={onSubmit} type="submit" class="w-full flex justify-center bg-blue-900  hover:bg-blue-800 text-gray-100 p-3  rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500">
+						<button onClick={onSubmit} type="submit" className="w-full flex justify-center bg-blue-900  hover:bg-blue-800 text-gray-100 p-3  rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500">
                 Sign In
               </button>
-              <p className='mt-2'>{errorMessage}</p>
+              <p className='mt-2 text-white'>{errorMessage}</p>
 					</div>
 
               
