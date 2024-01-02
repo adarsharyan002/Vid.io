@@ -3,6 +3,7 @@ import { Routes,Route } from 'react-router-dom'
 import { Suspense, lazy } from 'react';
 import Login from './components/Login';
 import { PrivateRoute } from './components/AuthenticatedRoute';
+import { Toaster } from 'react-hot-toast';
 const LobbyScreen = lazy(()=>import('./screens/LobbyScreen'))
 const Room = lazy(()=>import('./screens/Room'))
 const SignUp = lazy(()=>import('./components/SignUp'))
@@ -30,6 +31,7 @@ function App() {
 
        </Routes>
        </Suspense>
+       <Toaster/>
        
     </>
   );

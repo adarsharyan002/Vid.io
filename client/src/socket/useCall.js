@@ -93,7 +93,7 @@ function useCall(
  socket.emit("leave:room",{room:location.state.room})
 
 
- window.location.href = '/';
+ window.location.href = '/lobby';
 
  },[location.state.room, setRemoteStream, socket])
     

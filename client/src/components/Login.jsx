@@ -7,22 +7,29 @@ import { Link,useNavigate } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
 import { login } from '../redux/features/auth/authSlice';
 import { clearState } from '../redux/features/auth/authSlice';
-
+import { FaEyeSlash,FaEye } from "react-icons/fa6";
+import toast from 'react-hot-toast';
 
 
 const Login = () => {
   const [email, setEmail] = useState('')
-  const [errorMessage,setErrorMessage] = useState('')
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const [type,setType] = useState('Password');
+  const [toastId,setToastId] =useState(null)
+
   const {  user, error, isAuthenticated } = useSelector(
     (state) => state.auth
   )
+
+  //toast notification
   
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
+     const Id=toast.loading('Signing In')
+     setToastId(Id);
   
     
       const credentials = { email, password };
@@ -33,17 +40,32 @@ const Login = () => {
      
   };
 
+  const toggleVisibility = ()=>{
+
+    if(type==='Password')setType('text')
+    else setType('Password')
+  }
+
   useEffect(() => {
     // redirect user to login page if registration was successful
-    if (isAuthenticated) navigate('/lobby')
-    if(error)setErrorMessage(error)
+    if (isAuthenticated) {
+      toast.success('Signed In', {
+        id: toastId,
+      });
+      navigate('/lobby')}
+
+    if(error){
+      toast.error(error,{
+        id:toastId
+      })
+    }
   
     return ()=>{
       dispatch(clearState())
     }
     // redirect authenticated user to profile screen
     // if (user) navigate('/user-profile')
-  }, [navigate, isAuthenticated, user, error, dispatch])
+  }, [navigate, isAuthenticated, user, error, dispatch, toastId])
 
  
 
@@ -89,14 +111,14 @@ const Login = () => {
                 />
               </div>
 
-              <div className="relative" x-data="{ show: true }">
+              <div className="relative flex justify-center items-center" x-data="{ show: true }">
                 <input
                   placeholder="Password"
-                  type='Password'
+                  type={type}
                   onChange={(e) => setPassword(e.target.value)} 
                   className="w-full text-sm px-4 py-3 text-white bg-transparent  border border-gray-200 rounded-lg focus:outline-none"
                 />
-               
+               <button onClick={toggleVisibility} className='absolute right-4 text-white'>{type==='Password'?<FaEyeSlash/>:<FaEye/>}</button>
               </div>
               <div>
               <div className="flex items-center mb-4">
@@ -106,14 +128,13 @@ const Login = () => {
 						<button onClick={onSubmit} type="submit" className="w-full flex justify-center bg-blue-900  hover:bg-blue-800 text-gray-100 p-3  rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500">
                 Sign In
               </button>
-              <p className='mt-2 text-white'>{errorMessage}</p>
 					</div>
 
               
-
             </div>
           </div>
         </div>
+        
       </div>
 
      
