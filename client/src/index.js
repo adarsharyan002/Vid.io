@@ -4,6 +4,7 @@ import {BrowserRouter} from 'react-router-dom'
 import { SocketProvider } from './context/SocketProvide';
 import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import './index.css';
 import App from './App';
@@ -14,7 +15,11 @@ root.render(
     <BrowserRouter>
       <SocketProvider>
         <Provider store={configureStore}>
+        <GoogleOAuthProvider clientId="531623555053-lkdpa5qic3tvb1ehlgto42l7vr3c0k0u.apps.googleusercontent.com">
+
           <App />
+  </GoogleOAuthProvider>
+
         </Provider>
       </SocketProvider>
     </BrowserRouter>

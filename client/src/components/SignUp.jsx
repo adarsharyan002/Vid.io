@@ -8,6 +8,7 @@ import { signup } from '../redux/features/auth/authSlice';
 import { clearState } from '../redux/features/auth/authSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa6";
 import toast from 'react-hot-toast';
+import { GoogleLogin } from '@react-oauth/google';
 
 
 
@@ -148,7 +149,7 @@ useEffect(() => {
 					</div>
 
               
-
+       <GoogleLogin/>
             </div>
           </div>
         </div>
