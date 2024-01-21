@@ -18,7 +18,7 @@ function App() {
 
 
     
-       <GoogleOAuthProvider clientId="773184298457-gdkjr8ksi8i39n7klnkpihbn7cs2vfcf.apps.googleusercontent.com" >
+       <GoogleOAuthProvider clientId="" >
 
        
         <Suspense fallback={<div>Loading</div>}>
