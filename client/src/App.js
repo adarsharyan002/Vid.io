@@ -4,9 +4,11 @@ import { Suspense, lazy } from 'react';
 import Login from './components/Login';
 import { PrivateRoute } from './components/AuthenticatedRoute';
 import { Toaster } from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 const LobbyScreen = lazy(()=>import('./screens/LobbyScreen'))
 const Room = lazy(()=>import('./screens/Room'))
 const SignUp = lazy(()=>import('./components/SignUp'))
+
 
 
 
@@ -14,8 +16,12 @@ function App() {
   return (
     <>
 
+
+    
+       <GoogleOAuthProvider clientId="773184298457-gdkjr8ksi8i39n7klnkpihbn7cs2vfcf.apps.googleusercontent.com" >
+
        
-             <Suspense fallback={<div>Loading</div>}>
+        <Suspense fallback={<div>Loading</div>}>
 
        <Routes>
        <Route element={<PrivateRoute redirectTo="/" />}>
@@ -31,6 +37,8 @@ function App() {
 
        </Routes>
        </Suspense>
+       </GoogleOAuthProvider>
+       
        <Toaster/>
        
     </>

@@ -8,7 +8,8 @@ import { signup } from '../redux/features/auth/authSlice';
 import { clearState } from '../redux/features/auth/authSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa6";
 import toast from 'react-hot-toast';
-import { GoogleLogin } from '@react-oauth/google';
+import GoogleLoginButton from './GoogleLogin';
+
 
 
 
@@ -146,10 +147,11 @@ useEffect(() => {
 						<button onClick={onSubmit} type="submit" class="w-full flex justify-center bg-blue-900  hover:bg-blue-800 text-gray-100 p-3  rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500">
                 Sign Up
               </button>
+             
 					</div>
-
+          {/* <GoogleLoginButton/> */}
               
-       <GoogleLogin/>
+
             </div>
           </div>
         </div>

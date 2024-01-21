@@ -9,6 +9,7 @@ import { login } from '../redux/features/auth/authSlice';
 import { clearState } from '../redux/features/auth/authSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa6";
 import toast from 'react-hot-toast';
+import GoogleLoginButton from './GoogleLogin';
 
 
 const Login = () => {
@@ -130,7 +131,7 @@ const Login = () => {
               </button>
 					</div>
 
-              
+              {/* <GoogleLoginButton/> */}
             </div>
           </div>
         </div>

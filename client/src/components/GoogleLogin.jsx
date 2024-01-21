@@ -1,23 +1,51 @@
-import { GoogleLogin } from '@react-oauth/google';
+import  { useState, useEffect } from 'react';
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
-export default function GoogleLoginBtn() {
-  const handleSuccess = (credentialResponse) => {
-    // Handle the successful login here
-    console.log('Google login successful', credentialResponse);
-  };
+function App() {
+    const [ user, setUser ] = useState([]);
+    const [ profile, setProfile ] = useState([]);
 
-  const handleError = () => {
-    // Handle login errors here
-    console.log('Google login failed');
-  };
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log('Login Failed:', error),
+        flow:'auth-code'
+    });
 
-  return (
-    <div>
-      <GoogleLogin
-        onSuccess={handleSuccess}
-        onError={handleError}
-        // Optionally, you can customize the button appearance and behavior
-      />
-    </div>
-  );
+    console.log(profile)
+    console.log(user)
+
+    // useEffect(
+    //     () => {
+    //         if (user) {
+    //             axios
+    //                 .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+    //                     headers: {
+    //                         Authorization: `Bearer ${user.access_token}`,
+    //                         Accept: 'application/json'
+    //                     }
+    //                 })
+    //                 .then((res) => {
+    //                     setProfile(res.data);
+    //                 })
+    //                 .catch((err) => console.log(err));
+    //         }
+    //     },
+    //     [ user ]
+    // );
+
+    // log out function to log the user out of google and set the profile array to null
+    // const logOut = () => {
+    //     googleLogout();
+    //     setProfile(null);
+    // };
+
+    return (
+        <div>
+           
+                <button onClick={() => login()}>Sign in with Google 🚀 </button>
+           
+        </div>
+    );
 }
+export default App;
